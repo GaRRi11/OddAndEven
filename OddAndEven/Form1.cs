@@ -14,18 +14,13 @@ namespace OddAndEven
             AcceptButton = btnAdd;
         }
 
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBox1.Text))
+            if (!int.TryParse(textBox1.Text, out int number) ||
+                string.IsNullOrWhiteSpace(textBox1.Text))
             {
-                MessageBox.Show("Please enter a number.");
-                textBox1.Clear();
-                return;
-            }
-
-            if (!int.TryParse(textBox1.Text, out int number))
-            {
-                MessageBox.Show("Type only numbers");
+                MessageBox.Show("Type number");
                 textBox1.Clear();
                 return;
             }
@@ -43,37 +38,30 @@ namespace OddAndEven
 
         }
 
-        private void transferOne(ListBox listBox1, ListBox listBox2)
-        {
+        private void transfer(ListBox listBox1, ListBox listBox2, bool all) {
+
             if (listBox1.Items.Count > 0)
-            {
-                object itemToTransfer = listBox1.Items[0];
-                listBox1.Items.RemoveAt(0);
-                listBox2.Items.Add(itemToTransfer);
+            {    
+                    object itemToTransfer = listBox1.Items[0];
+                    listBox1.Items.RemoveAt(0);
+                    listBox2.Items.Add(itemToTransfer);   
             }
             else
             {
                 MessageBox.Show("No items in the list to transfer.");
+                return;
+            }
+
+            if (!all)
+            {
+                return;
+            }
+            while (listBox1.Items.Count > 0) {
+                transfer(listBox1 as ListBox, listBox2, true);
             }
         }
 
-        private void transferAll(ListBox listBox1, ListBox listBox2)
-        {
-            if (listBox1.Items.Count > 0)
-            {
-                foreach (var item in listBox1.Items)
-                {
-                    listBox2.Items.Add(item);
-                }
-                listBox1.Items.Clear();
-            }
-            else
-            {
-                MessageBox.Show("No items in the list to transfer.");
-            }
-        }
-
-        private void SortAndRefreshList(ListBox listBox, bool ascending) {
+        private void SortAndRefreshListBox(ListBox listBox, bool ascending) {
 
             List<int> numbers = new List<int>();
 
@@ -109,37 +97,38 @@ namespace OddAndEven
                 listBox.Items.Add(number);
             }
         }
+
         private void btnOddToEven_Click(object sender, EventArgs e)
         {
-            transferOne(listOdd, listEven);
+            transfer(listOdd, listEven,false);
         }
         private void btnOddToEvenAll_Click(object sender, EventArgs e)
         {
-            transferAll(listOdd, listEven);
+            transfer(listOdd, listEven,true);
         }
         private void btnEvenToOdd_Click(object sender, EventArgs e)
         {
-            transferOne(listEven, listOdd);
+            transfer(listEven, listOdd,false);
         }
         private void btnEvenToOddAll_Click(object sender, EventArgs e)
         {
-            transferAll(listEven, listOdd);
+            transfer(listEven, listOdd,true);
         }
         private void btnEvenAscending_Click(object sender, EventArgs e)
         {
-            SortAndRefreshList(listEven, true);
+            SortAndRefreshListBox(listEven, true);
         }
         private void btnEvenDescending_Click(object sender, EventArgs e)
         {
-            SortAndRefreshList(listEven, false);
+            SortAndRefreshListBox(listEven, false);
         }
         private void btnOddAscending_Click(object sender, EventArgs e)
         {
-            SortAndRefreshList(listOdd, true);
+            SortAndRefreshListBox(listOdd, true);
         }
         private void btnOddDescending_Click(object sender, EventArgs e)
         {
-            SortAndRefreshList(listOdd, false);
+            SortAndRefreshListBox(listOdd, false);
         }
     }
 }
