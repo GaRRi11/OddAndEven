@@ -46,6 +46,7 @@
             listEven.ItemHeight = 20;
             listEven.Location = new Point(44, 24);
             listEven.Name = "listEven";
+            listEven.SelectionMode = SelectionMode.MultiExtended;
             listEven.Size = new Size(170, 244);
             listEven.TabIndex = 0;
             listEven.Click += ListBox_Click;
@@ -56,10 +57,10 @@
             listOdd.ItemHeight = 20;
             listOdd.Location = new Point(342, 24);
             listOdd.Name = "listOdd";
+            listOdd.SelectionMode = SelectionMode.MultiExtended;
             listOdd.Size = new Size(170, 244);
             listOdd.TabIndex = 1;
             listOdd.Click += ListBox_Click;
-
             // 
             // textBox1
             // 

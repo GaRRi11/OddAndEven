@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Windows.Forms; // Import the System.Windows.Forms namespace
+using System.Windows.Forms;
 
 namespace OddAndEven
 {
     public static class ListBoxExtensions
     {
+
+        private const string emptyListWarningMessage = "No items in the list to transfer.";
+
         public static void SortAndRefreshListBox(this ListBox listBox, bool ascending)
         {
             List<int> numbers = new List<int>();
@@ -41,22 +44,36 @@ namespace OddAndEven
             }
         }
 
-        public static void transferOne(this ListBox senderList, ListBox getterList)
+        public static void transferSelectedItems(this ListBox sourceList, ListBox targetList)
         {
-            if (senderList.Items.Count > 0)
+            for (int i = 0; i < sourceList.SelectedItems.Count; i++)
             {
-                object itemToTransfer = senderList.Items[0];
-                senderList.Items.RemoveAt(0);
-                getterList.Items.Add(itemToTransfer);
+                targetList.Items.Add(sourceList.SelectedItems[i]);
+            }
+
+            while (sourceList.SelectedItems.Count > 0)
+            {
+                sourceList.Items.Remove(sourceList.SelectedItems[0]);
+            }
+        }
+
+        public static void transferOne(this ListBox sourceList, ListBox targetList)
+        {
+            if (sourceList.Items.Count > 0)
+            {
+                object itemToTransfer = sourceList.Items[0];
+                sourceList.Items.RemoveAt(0);
+                targetList.Items.Add(itemToTransfer);
             }
             else
             {
-                MessageBox.Show("No items in the list to transfer.");
+                MessageBox.Show(emptyListWarningMessage);
                 return;
             }
 
 
         }
+
         public static void transferAll(this ListBox senderList, ListBox getterList)
         {
             while (senderList.Items.Count > 0)
@@ -67,7 +84,7 @@ namespace OddAndEven
 
             if (getterList.Items.Count == 0)
             {
-                MessageBox.Show("No items in the list to transfer.");
+                MessageBox.Show(emptyListWarningMessage);
             }
         }
     }
