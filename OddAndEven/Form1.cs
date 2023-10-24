@@ -5,13 +5,24 @@ namespace OddAndEven
 {
     public partial class Form1 : Form
     {
+        private ListBox selectedListBox;
         public Form1()
         {
             InitializeComponent();
+
+            listEven.Click += ListBox_Click;
+            listOdd.Click += ListBox_Click;
+
         }
         private void Form1_Load(object sender, EventArgs e)
         {
             AcceptButton = btnAdd;
+            CreateButtom();
+        }
+
+        private void ListBox_Click(object sender, EventArgs e)
+        {
+            selectedListBox = (ListBox)sender; // Store the selected ListBox.
         }
 
 
@@ -37,98 +48,55 @@ namespace OddAndEven
             textBox1.Clear();
 
         }
-
-        private void transfer(ListBox listBox1, ListBox listBox2, bool all) {
-
-            if (listBox1.Items.Count > 0)
-            {    
-                    object itemToTransfer = listBox1.Items[0];
-                    listBox1.Items.RemoveAt(0);
-                    listBox2.Items.Add(itemToTransfer);   
-            }
-            else
-            {
-                MessageBox.Show("No items in the list to transfer.");
-                return;
-            }
-
-            if (!all)
-            {
-                return;
-            }
-            while (listBox1.Items.Count > 0) {
-                transfer(listBox1 as ListBox, listBox2, true);
-            }
-        }
-
-        private void SortAndRefreshListBox(ListBox listBox, bool ascending) {
-
-            List<int> numbers = new List<int>();
-
-            foreach (object item in listBox.Items)
-            {
-                if (item != null)
-                {
-                    if (int.TryParse(item.ToString(), out int number))
-                    {
-                        numbers.Add(number);
-                    }
-                }
-
-            }
-            if (numbers.Count != 0) {
-                if (ascending)
-                {
-                    numbers.Sort();
-                }
-                else
-                {
-                    numbers.Sort((x, y) => y.CompareTo(x));
-                }
-            }
-            else {
-                return;
-            }
-            
-
-            listBox.Items.Clear();
-            foreach (int number in numbers)
-            {
-                listBox.Items.Add(number);
-            }
+        private void CreateButtom()
+        {
+            Button button = new Button();
+            button.Text = "aaa";
+            button.Width = 50;
+            button.Height = 20;
+            button.Top = 150;
+            button.Left = 15;
+            this.Controls.Add(button);
         }
 
         private void btnOddToEven_Click(object sender, EventArgs e)
         {
-            transfer(listOdd, listEven,false);
+            listOdd.transferOne(listEven);
         }
         private void btnOddToEvenAll_Click(object sender, EventArgs e)
         {
-            transfer(listOdd, listEven,true);
+            listOdd.transferAll(listEven);
         }
         private void btnEvenToOdd_Click(object sender, EventArgs e)
         {
-            transfer(listEven, listOdd,false);
+            listEven.transferOne(listOdd);
         }
         private void btnEvenToOddAll_Click(object sender, EventArgs e)
         {
-            transfer(listEven, listOdd,true);
+            listEven.transferAll(listOdd);
         }
-        private void btnEvenAscending_Click(object sender, EventArgs e)
+        private void btnAscending_Click(object sender, EventArgs e)
         {
-            SortAndRefreshListBox(listEven, true);
+            if (selectedListBox != null)
+            {
+                selectedListBox.SortAndRefreshListBox(true);
+                selectedListBox = null;
+            }
+            else {
+                MessageBox.Show("Please select a ListBox first.");
+            }
         }
-        private void btnEvenDescending_Click(object sender, EventArgs e)
+        private void btnDescending_Click(object sender, EventArgs e)
         {
-            SortAndRefreshListBox(listEven, false);
-        }
-        private void btnOddAscending_Click(object sender, EventArgs e)
-        {
-            SortAndRefreshListBox(listOdd, true);
-        }
-        private void btnOddDescending_Click(object sender, EventArgs e)
-        {
-            SortAndRefreshListBox(listOdd, false);
+            if (selectedListBox != null)
+            {
+                selectedListBox.SortAndRefreshListBox(true);
+                selectedListBox = null;
+            }
+            else
+            {
+                MessageBox.Show("Please select a ListBox first.");
+            }
         }
     }
 }

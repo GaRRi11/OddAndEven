@@ -36,10 +36,8 @@
             btnOddToEvenAll = new Button();
             btnEvenToOdd = new Button();
             btnEvenToOddAll = new Button();
-            btnEvenAscending = new Button();
-            btnEvenDescending = new Button();
-            btnOddAscending = new Button();
-            btnOddDescending = new Button();
+            btnAscending = new Button();
+            btnDescending = new Button();
             SuspendLayout();
             // 
             // listEven
@@ -50,6 +48,7 @@
             listEven.Name = "listEven";
             listEven.Size = new Size(170, 244);
             listEven.TabIndex = 0;
+            listEven.Click += ListBox_Click;
             // 
             // listOdd
             // 
@@ -59,6 +58,8 @@
             listOdd.Name = "listOdd";
             listOdd.Size = new Size(170, 244);
             listOdd.TabIndex = 1;
+            listOdd.Click += ListBox_Click;
+
             // 
             // textBox1
             // 
@@ -121,60 +122,35 @@
             btnEvenToOddAll.UseVisualStyleBackColor = true;
             btnEvenToOddAll.Click += btnEvenToOddAll_Click;
             // 
-            // btnEvenAscending
+            // btnAscending
             // 
-            btnEvenAscending.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            btnEvenAscending.Location = new Point(552, 47);
-            btnEvenAscending.Name = "btnEvenAscending";
-            btnEvenAscending.Size = new Size(114, 48);
-            btnEvenAscending.TabIndex = 8;
-            btnEvenAscending.Text = "Even Ascending";
-            btnEvenAscending.UseVisualStyleBackColor = true;
-            btnEvenAscending.Click += btnEvenAscending_Click;
+            btnAscending.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            btnAscending.Location = new Point(552, 47);
+            btnAscending.Name = "btnAscending";
+            btnAscending.Size = new Size(114, 48);
+            btnAscending.TabIndex = 8;
+            btnAscending.Text = "Sort Ascending";
+            btnAscending.UseVisualStyleBackColor = true;
+            btnAscending.Click += btnAscending_Click;
             // 
-            // btnEvenDescending
+            // btnDescending
             // 
-            btnEvenDescending.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            btnEvenDescending.Location = new Point(552, 101);
-            btnEvenDescending.Name = "btnEvenDescending";
-            btnEvenDescending.Size = new Size(114, 48);
-            btnEvenDescending.TabIndex = 9;
-            btnEvenDescending.Text = "Even Descending";
-            btnEvenDescending.UseVisualStyleBackColor = true;
-            btnEvenDescending.Click += btnEvenDescending_Click;
-            // 
-            // btnOddAscending
-            // 
-            btnOddAscending.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            btnOddAscending.ForeColor = SystemColors.ActiveCaptionText;
-            btnOddAscending.Location = new Point(552, 155);
-            btnOddAscending.Name = "btnOddAscending";
-            btnOddAscending.Size = new Size(114, 48);
-            btnOddAscending.TabIndex = 10;
-            btnOddAscending.Text = " Odd Ascending";
-            btnOddAscending.UseVisualStyleBackColor = true;
-            btnOddAscending.Click += btnOddAscending_Click;
-            // 
-            // btnOddDescending
-            // 
-            btnOddDescending.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            btnOddDescending.Location = new Point(552, 212);
-            btnOddDescending.Name = "btnOddDescending";
-            btnOddDescending.Size = new Size(114, 48);
-            btnOddDescending.TabIndex = 11;
-            btnOddDescending.Text = "Odd Descending";
-            btnOddDescending.UseVisualStyleBackColor = true;
-            btnOddDescending.Click += btnOddDescending_Click;
+            btnDescending.Font = new Font("Segoe UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            btnDescending.Location = new Point(552, 101);
+            btnDescending.Name = "btnDescending";
+            btnDescending.Size = new Size(114, 48);
+            btnDescending.TabIndex = 9;
+            btnDescending.Text = "Sort Descending";
+            btnDescending.UseVisualStyleBackColor = true;
+            btnDescending.Click += btnDescending_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
-            Controls.Add(btnOddDescending);
-            Controls.Add(btnOddAscending);
-            Controls.Add(btnEvenDescending);
-            Controls.Add(btnEvenAscending);
+            Controls.Add(btnDescending);
+            Controls.Add(btnAscending);
             Controls.Add(btnEvenToOddAll);
             Controls.Add(btnEvenToOdd);
             Controls.Add(btnOddToEvenAll);
@@ -200,9 +176,7 @@
         private Button btnOddToEvenAll;
         private Button btnEvenToOdd;
         private Button btnEvenToOddAll;
-        private Button btnEvenAscending;
-        private Button btnEvenDescending;
-        private Button btnOddAscending;
-        private Button btnOddDescending;
+        private Button btnAscending;
+        private Button btnDescending;
     }
 }
