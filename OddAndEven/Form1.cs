@@ -5,22 +5,75 @@ namespace OddAndEven
 {
     public partial class Form1 : Form
     {
-        private ListBox selectedListBox;
         private const string NoItemsToSortMessage = "No items in the list to sort.";
         private const string UnselectedListBoxMessage = "Please select a ListBox first.";
-
+        private ListBox selectedListBox;
+        private ListBox listEven;
+        private ListBox listOdd;
+        private Button btnAdd;
+        private Button btnOddToEven;
+        private Button btnEvenToOdd;
+        private Button btnOddToEvenAll;
+        private Button btnEvenToOddAll;
+        private Button btnAscending;
+        private Button btnDescending;
+        private TextBox textBox1;
 
         public Form1()
         {
             InitializeComponent();
+        }
 
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            ControlManager controlManager = new ControlManager();
+
+            listEven = controlManager.createListBox("listEven", new Point(44, 24), new Size(170, 244));
+            listOdd = controlManager.createListBox("listOdd", new Point(371, 24), new Size(170, 244));
+            this.Controls.Add(listEven);
+            this.Controls.Add(listOdd);
             listEven.Click += ListBox_Click;
             listOdd.Click += ListBox_Click;
 
-        }
-        private void Form1_Load(object sender, EventArgs e)
-        {
+            btnOddToEven = controlManager.CreateButton("btnOddToEven", "<-",
+                new Point(230, 47), new Size(94, 29));
+            this.Controls.Add(btnOddToEven);
+            btnOddToEven.Click += btnOddToEven_Click;
+
+            btnEvenToOdd = controlManager.CreateButton("btnEvenToOdd", "->",
+                new Point(230, 153), new Size(94, 35));
+            this.Controls.Add(btnEvenToOdd);
+            btnEvenToOdd.Click += btnEvenToOdd_Click;
+
+            btnOddToEvenAll = controlManager.CreateButton("btnOddToEvenAll", "<- <-",
+                new Point(230, 101), new Size(94, 29));
+            this.Controls.Add(btnOddToEvenAll);
+            btnOddToEvenAll.Click += btnOddToEvenAll_Click;
+
+            btnEvenToOddAll = controlManager.CreateButton("btnEvenToOddAll", "-> ->",
+                new Point(230, 232), new Size(94, 29));
+            this.Controls.Add(btnEvenToOddAll);
+            btnEvenToOddAll.Click += btnEvenToOddAll_Click;
+
+            btnAdd = controlManager.CreateButton("btnAdd", "Add", new Point(418, 360),
+                new Size(94, 29));
+            this.Controls.Add(btnAdd);
+            btnAdd.Click += btnAdd_Click;
             AcceptButton = btnAdd;
+
+            btnAscending = controlManager.CreateButton("btnAscending", "Sort Ascending",
+                new Point(552, 47), new Size(114, 48));
+            this.Controls.Add(btnAscending);
+            btnAscending.Click += btnAscending_Click;
+
+            btnDescending = controlManager.CreateButton("btnDescending", "Sort Descending",
+                new Point(552, 101), new Size(114, 48));
+            this.Controls.Add(btnDescending);
+            btnDescending.Click += btnDescending_Click;
+
+            textBox1 = controlManager.createTextBox("textBox1", new Point(44, 360),
+                new Size(328, 27)); 
+            this.Controls.Add(textBox1);
         }
 
         private void ListBox_Click(object sender, EventArgs e)
@@ -64,7 +117,7 @@ namespace OddAndEven
 
         private void btnOddToEven_Click(object sender, EventArgs e)
         {
-            if(listOdd.SelectedItems.Count == 0)
+            if (listOdd.SelectedItems.Count == 0)
             {
                 listOdd.transferOne(listEven);
             }
@@ -133,17 +186,5 @@ namespace OddAndEven
                 }
             }
         }
-
-
-        //private void CreateButtom()
-        //{
-        //    Button button = new Button();
-        //    button.Text = "aaa";
-        //    button.Width = 50;
-        //    button.Height = 20;
-        //    button.Top = 150;
-        //    button.Left = 15;
-        //    this.Controls.Add(button);
-        //}
     }
 }
