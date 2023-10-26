@@ -44,6 +44,22 @@ namespace OddAndEven
             }
         }
 
+        public static void deleteSelectedItems(this ListBox listBox)
+        {
+            if (listBox != null && listBox.SelectedItems.Count > 0)
+            {
+                List<object> itemsToRemove = new List<object>();
+                foreach (var item in listBox.SelectedItems)
+                {
+                    itemsToRemove.Add(item);
+                }
+                foreach (var item in itemsToRemove)
+                {
+                    listBox.Items.Remove(item);
+                }
+            }
+        }
+
         public static void transferSelectedItems(this ListBox sourceList, ListBox targetList)
         {
             for (int i = 0; i < sourceList.SelectedItems.Count; i++)

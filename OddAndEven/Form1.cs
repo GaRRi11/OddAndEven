@@ -7,6 +7,7 @@ namespace OddAndEven
     {
         private const string NoItemsToSortMessage = "No items in the list to sort.";
         private const string UnselectedListBoxMessage = "Please select a ListBox first.";
+        private ControlManager controlManager;
         private ListBox selectedListBox;
         private ListBox listEven;
         private ListBox listOdd;
@@ -17,19 +18,27 @@ namespace OddAndEven
         private Button btnEvenToOddAll;
         private Button btnAscending;
         private Button btnDescending;
+        private Button btnUndo;
+        private Button btndelete;
         private TextBox textBox1;
+        private Stack<Operation> operationHistory = new Stack<Operation>();
+
 
         public Form1()
         {
             InitializeComponent();
+            Button testButton = new Button();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            ControlManager controlManager = new ControlManager();
+             controlManager = new ControlManager();
 
-            listEven = controlManager.createListBox("listEven", new Point(44, 24), new Size(170, 244));
-            listOdd = controlManager.createListBox("listOdd", new Point(371, 24), new Size(170, 244));
+
+            listEven = controlManager.createListBox("listEven", new Point(44, 24),
+                new Size(170, 244));
+            listOdd = controlManager.createListBox("listOdd", new Point(371, 24),
+                new Size(170, 244));
             this.Controls.Add(listEven);
             this.Controls.Add(listOdd);
             listEven.Click += ListBox_Click;
@@ -71,9 +80,39 @@ namespace OddAndEven
             this.Controls.Add(btnDescending);
             btnDescending.Click += btnDescending_Click;
 
+            btnUndo = controlManager.CreateButton("btnUndo", "Undo",
+                new Point(681, 400), new Size(114, 48));
+            this.Controls.Add(btnUndo);
+            btnUndo.Click += btnUndo_Click;
+
+            btndelete = controlManager.CreateButton("btnDelete", "Delete",
+                new Point(552, 155), new Size(114, 48));
+            this.Controls.Add(btndelete);
+            btndelete.Click += btnDelete_Click;
+
+
             textBox1 = controlManager.createTextBox("textBox1", new Point(44, 360),
-                new Size(328, 27)); 
+                new Size(328, 27));
             this.Controls.Add(textBox1);
+
+        }
+        private void btnUndo_Click(object sender, EventArgs e)
+        { }
+
+
+            private void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (listEven.SelectedItems.Count > 0 || listOdd.SelectedItems.Count > 0)
+            {
+                listEven.deleteSelectedItems();
+                listOdd.deleteSelectedItems();
+                listEven.ClearSelected();
+                listOdd.ClearSelected();
+            }
+            else
+            {
+                MessageBox.Show("No items selected to delete.");
+            }
         }
 
         private void ListBox_Click(object sender, EventArgs e)
@@ -92,6 +131,7 @@ namespace OddAndEven
             }
         }
 
+
         private void btnAdd_Click(object sender, EventArgs e)
         {
             if (!int.TryParse(textBox1.Text, out int number) ||
@@ -101,6 +141,7 @@ namespace OddAndEven
                 textBox1.Clear();
                 return;
             }
+
 
             if (number % 2 == 0)
             {
