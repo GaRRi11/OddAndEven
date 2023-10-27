@@ -21,7 +21,8 @@ namespace OddAndEven
         private Button btnUndo;
         private Button btndelete;
         private TextBox textBox1;
-        private Stack<Operation> operationHistory = new Stack<Operation>();
+        private Stack<ActionDescription> actionStack = new Stack<ActionDescription>();
+
 
 
         public Form1()
@@ -96,18 +97,94 @@ namespace OddAndEven
             this.Controls.Add(textBox1);
 
         }
+
         private void btnUndo_Click(object sender, EventArgs e)
-        { }
-
-
-            private void btnDelete_Click(object sender, EventArgs e)
         {
+            if (actionStack.Count > 0)
+            {
+                ActionDescription lastAction = actionStack.Pop();
+
+                switch (lastAction.Type)
+                {
+                    case ActionDescription.ActionType.Add:
+
+                        // Undo the "Add" action
+                        lastAction.TargetListBox.Items.Remove(lastAction.Data);
+                        break;
+
+                    case ActionDescription.ActionType.Remove:
+                        // Undo the "Remove" action
+                        if (lastAction.Data is List<object> itemsToRemove)
+                        {
+                            foreach (var item in itemsToRemove)
+                            {
+                                lastAction.TargetListBox.Items.Add(item);
+                            }
+                        }
+                        break;
+
+                    case ActionDescription.ActionType.Transfer:
+
+                        if (lastAction.Data is List<object> itemsToTransfer)
+                        {
+                            // Reverse the transfer by moving items from the target back to the source
+                            foreach (var item in itemsToTransfer)
+                            {
+                                lastAction.SourceListBox.Items.Add(item);
+                                lastAction.TargetListBox.Items.Remove(item);
+                            }
+                        }
+                        break;
+
+                    case ActionDescription.ActionType.Sort:
+
+                        lastAction.TargetListBox.Items.Clear();
+                        foreach (var item in lastAction.OriginalOrder)
+                        {
+                            lastAction.TargetListBox.Items.Add(item);
+                        }
+                        break;
+                }
+            }
+        }
+
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            
+
             if (listEven.SelectedItems.Count > 0 || listOdd.SelectedItems.Count > 0)
             {
+
+                //
+                List<object> itemsToRemove = new List<object>();
+                ListBox targetListBox = null;
+
+                foreach (var item in listEven.SelectedItems)
+                {
+                    itemsToRemove.Add(item);
+                    targetListBox = listEven;
+                }
+                foreach (var item in listOdd.SelectedItems)
+                {
+                    itemsToRemove.Add(item);
+                    targetListBox = listOdd;
+                }
+                //
                 listEven.deleteSelectedItems();
                 listOdd.deleteSelectedItems();
                 listEven.ClearSelected();
                 listOdd.ClearSelected();
+
+                // 
+                actionStack.Push(new ActionDescription
+                {
+                    Type = ActionDescription.ActionType.Remove,
+                    Data = itemsToRemove,
+                    TargetListBox = targetListBox, // You can set this to null for Remove
+                });
+                //
+
             }
             else
             {
@@ -124,10 +201,14 @@ namespace OddAndEven
             if (selectedListBox == listEven)
             {
                 listOdd.BorderStyle = BorderStyle.None;
+                listOdd.ClearSelected(); // Clear selection in the other ListBox
+
             }
             else if (selectedListBox == listOdd)
             {
                 listEven.BorderStyle = BorderStyle.None;
+                listEven.ClearSelected(); // Clear selection in the other ListBox
+
             }
         }
 
@@ -152,40 +233,131 @@ namespace OddAndEven
                 listOdd.Items.Add(textBox1.Text);
             }
 
+            //
+            actionStack.Push(new ActionDescription
+            {
+                Type = ActionDescription.ActionType.Add,
+                Data = textBox1.Text,
+                TargetListBox = number % 2 == 0 ? listEven : listOdd,
+            });
+            //
+
             textBox1.Clear();
+
+
 
         }
 
         private void btnOddToEven_Click(object sender, EventArgs e)
         {
+            List<object> itemsToTransfer = new List<object>();
+
+
             if (listOdd.SelectedItems.Count == 0)
             {
                 listOdd.transferOne(listEven);
+                itemsToTransfer.Add(listEven.Items[listEven.Items.Count - 1]);
+
             }
             else
             {
+                foreach (var selectedItem in listOdd.SelectedItems)
+                {
+                    itemsToTransfer.Add(selectedItem);
+                }
+
                 listOdd.transferSelectedItems(listEven);
             }
+            //
+            actionStack.Push(new ActionDescription
+            {
+                Type = ActionDescription.ActionType.Transfer,
+                Data = itemsToTransfer, // Store the selected items
+                TargetListBox = listEven, // Store the target ListBox
+                SourceListBox = listOdd, // Store the source ListBox
+            });
+            //
         }
+
         private void btnOddToEvenAll_Click(object sender, EventArgs e)
         {
+            List<object> itemsToTransfer = new List<object>();
+
+            while (listOdd.Items.Count > 0)
+            {
+                var itemToTransfer = listOdd.Items[0];
+                itemsToTransfer.Add(itemToTransfer);
+                listOdd.Items.RemoveAt(0);
+                listEven.Items.Add(itemToTransfer);
+            }
+
             listOdd.transferAll(listEven);
+
+
+            actionStack.Push(new ActionDescription
+            {
+                Type = ActionDescription.ActionType.Transfer,
+                Data = itemsToTransfer,
+                TargetListBox = listEven,
+                SourceListBox = listOdd,
+            });
         }
+
         private void btnEvenToOdd_Click(object sender, EventArgs e)
         {
+            List<object> itemsToTransfer = new List<object>();
+
+
             if (listEven.SelectedItems.Count == 0)
             {
                 listEven.transferOne(listOdd);
+                itemsToTransfer.Add(listOdd.Items[listOdd.Items.Count - 1]);
+
             }
             else
             {
-                listEven.transferSelectedItems(listOdd);
+                foreach (var selectedItem in listEven.SelectedItems)
+                {
+                    itemsToTransfer.Add(selectedItem);
+                }
+
+                listOdd.transferSelectedItems(listOdd);
             }
+            //
+            actionStack.Push(new ActionDescription
+            {
+                Type = ActionDescription.ActionType.Transfer,
+                Data = itemsToTransfer, // Store the selected items
+                TargetListBox = listOdd, // Store the target ListBox
+                SourceListBox = listEven, // Store the source ListBox
+            });
+            //
         }
+
         private void btnEvenToOddAll_Click(object sender, EventArgs e)
         {
+            List<object> itemsToTransfer = new List<object>();
+
+            while (listEven.Items.Count > 0)
+            {
+                var itemToTransfer = listEven.Items[0];
+                itemsToTransfer.Add(itemToTransfer);
+                listEven.Items.RemoveAt(0);
+                listOdd.Items.Add(itemToTransfer);
+            }
+
             listEven.transferAll(listOdd);
+
+
+            actionStack.Push(new ActionDescription
+            {
+                Type = ActionDescription.ActionType.Transfer,
+                Data = itemsToTransfer,
+                TargetListBox = listOdd,
+                SourceListBox = listEven,
+            });
         }
+
         private void btnAscending_Click(object sender, EventArgs e)
         {
             if (selectedListBox == null)
@@ -202,7 +374,25 @@ namespace OddAndEven
                 }
                 else
                 {
+                    // Save the original order
+                    List<object> originalOrder = new List<object>();
+                    foreach (object item in selectedListBox.Items)
+                    {
+                        originalOrder.Add(item);
+                    }
+                    //
+
                     selectedListBox.SortAndRefreshListBox(true);
+
+                    //
+                    actionStack.Push(new ActionDescription
+                    {
+                        Type = ActionDescription.ActionType.Sort,
+                        Data = null, // You can set this to null for Sort
+                        TargetListBox = selectedListBox, // Store the target ListBox
+                        OriginalOrder = originalOrder, // Store the original order
+                    });
+                    //
                 }
             }
         }
@@ -223,7 +413,26 @@ namespace OddAndEven
                 }
                 else
                 {
+
+                    // Save the original order
+                    List<object> originalOrder = new List<object>();
+                    foreach (object item in selectedListBox.Items)
+                    {
+                        originalOrder.Add(item);
+                    }
+                    //
+
                     selectedListBox.SortAndRefreshListBox(false);
+
+                    //
+                    actionStack.Push(new ActionDescription
+                    {
+                        Type = ActionDescription.ActionType.Sort,
+                        Data = null, // You can set this to null for Sort
+                        TargetListBox = selectedListBox, // Store the target ListBox
+                        OriginalOrder = originalOrder, // Store the original order
+                    });
+                    //
                 }
             }
         }
