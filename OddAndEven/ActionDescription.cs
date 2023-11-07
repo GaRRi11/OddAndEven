@@ -22,8 +22,8 @@ public class ActionDescription
     {
         this.actionType = actionType;
         this.Data = data;
-        this.SourceListBox = targetListBox;
-        this.TargetListBox = sourceListBox;
+        this.SourceListBox = sourceListBox;
+        this.TargetListBox = targetListBox;
     }
 
     public ActionDescription(ActionType actionType,

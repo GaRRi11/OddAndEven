@@ -63,7 +63,7 @@ namespace OddAndEven
                 }
                 else
                 {
-            
+
                     numbers.Sort((x, y) => y.CompareTo(x));
                 }
             }
@@ -90,14 +90,14 @@ namespace OddAndEven
         }
 
 
-        public static void addItem(this ListBox listBox,int item)
+        public static void addItem(this ListBox listBox, int item)
         {
             listBox.Items.Add(item);
             List<int> itemAdded = new List<int>();
             itemAdded.Add(item);
 
 
-            ActionDescription action = ActionDescription(
+            ActionDescription action = new ActionDescription(
                 ActionDescription.ActionType.Add,
                 itemAdded, //cifri
                 listBox
@@ -142,7 +142,8 @@ namespace OddAndEven
         {
             List<int> itemsToTransfer = new List<int>();
 
-            foreach (var item in sourceList.SelectedItems) {
+            foreach (var item in sourceList.SelectedItems)
+            {
 
                 if (item is int numericItem)
                 {
@@ -176,27 +177,25 @@ namespace OddAndEven
 
         public static void transferOne(this ListBox sourceList, ListBox targetList)
         {
-            if (sourceList.Items.Count == 0)
+            List<int> itemsToTransfer = checkAndCast(sourceList);
+            int itemToTransfer = 0;
+            if (itemsToTransfer.Count > 0)
             {
-                MessageBox.Show(emptyListWarningMessage);
-                return;
+                itemToTransfer = itemsToTransfer[0];
+                targetList.Items.Add(itemToTransfer);
+                sourceList.Items.Remove(itemToTransfer);
             }
 
-            List<int> itemsToTransfer = new List<int>();
-
-            int itemToTransfer = (int) sourceList.Items[0];
-            itemsToTransfer.Add(itemToTransfer);
-            sourceList.Items.RemoveAt(0);
-            targetList.Items.Add(itemToTransfer);
 
             ActionDescription action = new ActionDescription(
                 ActionDescription.ActionType.Transfer,
-                itemsToTransfer, //gadasatani itemebis listi
+                new List<int> { itemToTransfer },  // Items to transfer
                 sourceList,
                 targetList
                 );
 
             undoManager.PushAction(action);
+
 
         }
 
@@ -217,14 +216,15 @@ namespace OddAndEven
                 itemsToTransfer,
                 sourceList,
                 targetList
-            ));
+            );
 
             undoManager.PushAction(action);
 
 
         }
 
-        public static void undo(this Form form) {
+        public static void undo(this Form form)
+        {
 
             undoManager.Undo();
 

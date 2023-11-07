@@ -2,9 +2,9 @@
 
 public class UndoManager
 {
-	public UndoManager()
-	{
-	}
+    public UndoManager()
+    {
+    }
 
     private Stack<ActionDescription> actionStack = new Stack<ActionDescription>();
 
@@ -19,7 +19,7 @@ public class UndoManager
         {
             ActionDescription lastAction = actionStack.Pop();
 
-            switch (lastAction.ActionType)
+            switch (lastAction.actionType)
             {
                 case ActionDescription.ActionType.Add:
                     UndoAddAction(lastAction);
