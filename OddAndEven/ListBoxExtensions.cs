@@ -8,6 +8,8 @@ namespace OddAndEven
     {
 
         private const string emptyListWarningMessage = "No items in the list to transfer.";
+        private const string unknownDataTypeMessage = "Unknown data type detected.";
+
         private static UndoManager undoManager = new UndoManager();
 
 
@@ -22,14 +24,8 @@ namespace OddAndEven
                 {
                     list.Add(numericItem);
                 }
-                else if (item is string numericString && int.TryParse(numericString, out int parsedValue))
-                {
-                    list.Add(parsedValue);
-                }
-                else
-                {
-                    // Add some debugging information to identify items that couldn't be parsed.
-                    Console.WriteLine($"Could not parse item: {item}");
+                else {
+                    MessageBox.Show(unknownDataTypeMessage);
                 }
             }
 
@@ -40,19 +36,20 @@ namespace OddAndEven
         public static void SortAndRefreshListBox(this ListBox listBox, bool ascending)
         {
 
-            List<int> numbers = new List<int>();
-            List<int> originalOrder = new List<int>();
-            //originalOrder = checkAndCast(listBox);
-            //numbers = checkAndCast(listBox);
+            //List<int> numbers = new List<int>();
+            //List<int> originalOrder = new List<int>();
+            
+            //foreach (object item in listBox.Items)
+            //{
+            //    if (item != null && int.TryParse(item.ToString(), out int number))
+            //    {
+            //        numbers.Add(number);
+            //        originalOrder.Add(number);
+            //    }
+            //}
 
-            foreach (object item in listBox.Items)
-            {
-                if (item != null && int.TryParse(item.ToString(), out int number))
-                {
-                    numbers.Add(number);
-                    originalOrder.Add(number);
-                }
-            }
+            List<int> numbers = checkAndCast(listBox);
+            List<int> originalOrder = checkAndCast(listBox);
 
 
             if (numbers.Count != 0)
@@ -149,11 +146,6 @@ namespace OddAndEven
                 {
                     itemsToTransfer.Add(numericItem);
                     targetList.Items.Add(numericItem);
-                }
-                else if (item is string numericString && int.TryParse(numericString, out int parsedValue))
-                {
-                    itemsToTransfer.Add(parsedValue);
-                    targetList.Items.Add(parsedValue);
                 }
             }
 
