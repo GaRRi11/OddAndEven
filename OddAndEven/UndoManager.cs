@@ -14,6 +14,10 @@ public class UndoManager
         actionStack.Push(action);
     }
 
+    public bool actionStackEmpty() {
+        return actionStack.Count == 0;
+    }
+
     public void Undo()
     {
         if (actionStack.Count > 0)
@@ -48,18 +52,12 @@ public class UndoManager
 
     private void UndoRemoveAction(ActionDescription action)
     {
-        foreach(int item in action.Data)
-        {
-            ListBoxExtensions.addItemMethod(action.TargetListBox, item);
-        }
+        ListBoxExtensions.addItemUndoer(action.TargetListBox, action.Data);
     }
 
     private void UndoTransferAction(ActionDescription action)
     {
-        foreach (int item in action.Data)
-        {
-            ListBoxExtensions.transferItem(action.TargetListBox, action.SourceListBox, item);
-        }
+        ListBoxExtensions.transferItem(action.TargetListBox, action.SourceListBox, action.Data);
     }
 
     private void UndoSortAction(ActionDescription action)

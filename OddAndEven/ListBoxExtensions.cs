@@ -9,6 +9,8 @@ namespace OddAndEven
 
         private const string emptyListWarningMessage = "No items in the list to transfer.";
         private const string unknownDataTypeMessage = "Unknown data type detected.";
+        private const string noOperationsToUndoMessage = "No operations found to undo";
+
 
         private static UndoManager undoManager = new UndoManager();
 
@@ -52,84 +54,34 @@ namespace OddAndEven
             return list;
         }
 
-
-        public static void SortAndRefreshListBox(this ListBox listBox, bool ascending)
+        private static void RefreshListBox(ListBox listBox, List<int> numbers)
         {
-
-            //List<int> numbers = new List<int>();
-            //List<int> originalOrder = new List<int>();
-            
-            //foreach (object item in listBox.Items)
-            //{
-            //    if (item != null && int.TryParse(item.ToString(), out int number))
-            //    {
-            //        numbers.Add(number);
-            //        originalOrder.Add(number);
-            //    }
-            //}
-
-            List<int> numbers = checkAndCast(listBox);
-            List<int> originalOrder = checkAndCast(listBox);
-
-
-            if (numbers.Count != 0)
-            {
-                if (ascending)
-                {
-                    numbers.Sort();
-                }
-                else
-                {
-
-                    numbers.Sort((x, y) => y.CompareTo(x));
-                }
-            }
-            else
-            {
-                return;
-            }
-
             listBox.Items.Clear();
-
             foreach (int number in numbers)
             {
                 listBox.Items.Add(number);
             }
-
-            ActionDescription action = new ActionDescription(
-                ActionDescription.ActionType.Sort,
-                listBox, //romeli listboxia eg 
-                originalOrder
-                );
-
-            undoManager.PushAction(action);
-
         }
-
-
-        public static void addItem(this ListBox listBox, int item)
+        private static void SortNumbers(List<int> numbers, bool ascending)
         {
-            listBox.Items.Add(item);
-            List<int> itemAdded = new List<int>();
-            itemAdded.Add(item);
-
-
-            ActionDescription action = new ActionDescription(
-                ActionDescription.ActionType.Add,
-                itemAdded, //cifri
-                listBox
-                );
-
-            undoManager.PushAction(action);
-
+            numbers.Sort();
+            if (!ascending)
+            {
+                numbers.Reverse();
+            }
         }
 
-        public static void removeItem(this ListBox listBox, int item) {
+        public static void removeItem(this ListBox listBox, int item)
+        {
             listBox.Items.Remove(item);
         }
 
-        public static void addItemMethod(this ListBox listBox, int item) {
-            listBox.Items.Add(item); 
+        public static void addItemUndoer(this ListBox listBox, List<int> items)
+        {
+            foreach (int item in items)
+            {
+                listBox.Items.Add(item);
+            }
         }
 
         public static void sortOriginal(ListBox listbox, List<int> originalOrder)
@@ -141,29 +93,67 @@ namespace OddAndEven
             }
         }
 
+        public static void transferItem(ListBox sourceList, ListBox targetList, List<int> items)
+        {
+            foreach (int item in items)
+            {
+                targetList.Items.Add(item);
+                sourceList.removeItem(item);
+            }
+        }
+
+
+        public static void SortAndRefreshListBox(this ListBox listBox, bool ascending)
+        {
+            List<int> numbers = checkAndCast(listBox);
+            List<int> originalOrder = checkAndCast(listBox);
+
+
+            if (numbers.Count != 0)
+            {
+                SortNumbers(numbers, ascending);
+                RefreshListBox(listBox, numbers);
+                ActionDescription action = new ActionDescription(
+                    ActionDescription.ActionType.Sort,
+                    listBox, //romeli listboxia eg 
+                    originalOrder
+                    );
+
+                undoManager.PushAction(action);
+            }
+            else
+            {
+                return;
+            }
+
+        }
+
+
+        public static void addItem(this ListBox listBox, int item)
+        {
+            listBox.Items.Add(item);
+            List<int> itemAdded = new List<int>();
+            itemAdded.Add(item);
+
+            ActionDescription action = new ActionDescription(
+                ActionDescription.ActionType.Add,
+                itemAdded, //cifri
+                listBox
+                );
+
+            undoManager.PushAction(action);
+
+        }
+
+
         public static void deleteSelectedItems(this ListBox listBox)
         {
-            //List<int> itemsToRemove = new List<int>();
-
-            //if (listBox.SelectedItems.Count > 0)
-            //{
-            //    foreach (var item in listBox.SelectedItems)
-            //    {
-            //        if (item != null && int.TryParse(item.ToString(), out int number))
-            //        {
-            //            itemsToRemove.Add(number);
-            //        }
-            //    }
-            //}
-
             List<int> itemsToRemove = new List<int>();
 
             if (listBox.SelectedItems.Count > 0)
             {
                 itemsToRemove = checkAndCastSelected(listBox);
             }
-
-
 
             foreach (int item in itemsToRemove)
             {
@@ -175,7 +165,6 @@ namespace OddAndEven
                 itemsToRemove, //wasashleli cifrebis listi
                 listBox
                 );
-
             undoManager.PushAction(action);
 
         }
@@ -184,14 +173,10 @@ namespace OddAndEven
         {
             List<int> itemsToTransfer = new List<int>();
 
-            foreach (var item in sourceList.SelectedItems)
+            itemsToTransfer = checkAndCastSelected(sourceList);
+            foreach (int item in itemsToTransfer)
             {
-
-                if (item is int numericItem)
-                {
-                    itemsToTransfer.Add(numericItem);
-                    targetList.Items.Add(numericItem);
-                }
+                targetList.Items.Add(item);
             }
 
 
@@ -209,13 +194,8 @@ namespace OddAndEven
 
             undoManager.PushAction(action);
 
-
         }
 
-        public static void transferItem(ListBox sourceList, ListBox targetList,int item) {
-            targetList.addItemMethod(item);
-            sourceList.removeItem(item);
-        }
 
         public static void transferOne(this ListBox sourceList, ListBox targetList)
         {
@@ -237,7 +217,6 @@ namespace OddAndEven
                 );
 
             undoManager.PushAction(action);
-
 
         }
 
@@ -262,14 +241,19 @@ namespace OddAndEven
 
             undoManager.PushAction(action);
 
-
         }
 
         public static void undo(this Form form)
         {
-
-            undoManager.Undo();
-
+            if (undoManager.actionStackEmpty())
+            {
+                MessageBox.Show(noOperationsToUndoMessage);
+                return;
+            }
+            else
+            {
+                undoManager.Undo();
+            }
         }
 
     }
