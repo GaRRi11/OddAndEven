@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OddAndEven;
+using System;
 
 public class UndoManager
 {
@@ -42,38 +43,27 @@ public class UndoManager
 
     private void UndoAddAction(ActionDescription action)
     {
-        action.TargetListBox.Items.Remove(action.Data[0]);
+        ListBoxExtensions.removeItem(action.TargetListBox, action.Data[0]);
     }
 
     private void UndoRemoveAction(ActionDescription action)
     {
-        if (action.Data is List<int> itemsToRemove)
+        foreach(int item in action.Data)
         {
-            foreach (var item in itemsToRemove)
-            {
-                action.TargetListBox.Items.Add(item);
-            }
+            ListBoxExtensions.addItemMethod(action.TargetListBox, item);
         }
     }
 
     private void UndoTransferAction(ActionDescription action)
     {
-        if (action.Data is List<int> itemsToTransfer)
+        foreach (int item in action.Data)
         {
-            foreach (var item in itemsToTransfer)
-            {
-                action.SourceListBox.Items.Add(item);
-                action.TargetListBox.Items.Remove(item);
-            }
+            ListBoxExtensions.transferItem(action.TargetListBox, action.SourceListBox, item);
         }
     }
 
     private void UndoSortAction(ActionDescription action)
     {
-        action.TargetListBox.Items.Clear();
-        foreach (var item in action.OriginalOrder)
-        {
-            action.TargetListBox.Items.Add(item);
-        }
+        ListBoxExtensions.sortOriginal(action.TargetListBox, action.OriginalOrder);
     }
 }

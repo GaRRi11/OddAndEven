@@ -32,6 +32,26 @@ namespace OddAndEven
             return list;
         }
 
+        private static List<int> checkAndCastSelected(ListBox listBox)
+        {
+
+            List<int> list = new List<int>();
+
+            foreach (var item in listBox.SelectedItems)
+            {
+                if (item is int numericItem)
+                {
+                    list.Add(numericItem);
+                }
+                else
+                {
+                    MessageBox.Show(unknownDataTypeMessage);
+                }
+            }
+
+            return list;
+        }
+
 
         public static void SortAndRefreshListBox(this ListBox listBox, bool ascending)
         {
@@ -104,23 +124,48 @@ namespace OddAndEven
 
         }
 
+        public static void removeItem(this ListBox listBox, int item) {
+            listBox.Items.Remove(item);
+        }
+
+        public static void addItemMethod(this ListBox listBox, int item) {
+            listBox.Items.Add(item); 
+        }
+
+        public static void sortOriginal(ListBox listbox, List<int> originalOrder)
+        {
+            listbox.Items.Clear();
+            foreach (int number in originalOrder)
+            {
+                listbox.Items.Add(number);
+            }
+        }
+
         public static void deleteSelectedItems(this ListBox listBox)
         {
+            //List<int> itemsToRemove = new List<int>();
+
+            //if (listBox.SelectedItems.Count > 0)
+            //{
+            //    foreach (var item in listBox.SelectedItems)
+            //    {
+            //        if (item != null && int.TryParse(item.ToString(), out int number))
+            //        {
+            //            itemsToRemove.Add(number);
+            //        }
+            //    }
+            //}
+
             List<int> itemsToRemove = new List<int>();
 
-            if (listBox != null && listBox.SelectedItems.Count > 0)
+            if (listBox.SelectedItems.Count > 0)
             {
-                foreach (var item in listBox.SelectedItems)
-                {
-                    if (item != null && int.TryParse(item.ToString(), out int number))
-                    {
-                        itemsToRemove.Add(number);
-                    }
-                }
+                itemsToRemove = checkAndCastSelected(listBox);
             }
 
 
-            foreach (var item in itemsToRemove)
+
+            foreach (int item in itemsToRemove)
             {
                 listBox.Items.Remove(item);
             }
@@ -165,6 +210,11 @@ namespace OddAndEven
             undoManager.PushAction(action);
 
 
+        }
+
+        public static void transferItem(ListBox sourceList, ListBox targetList,int item) {
+            targetList.addItemMethod(item);
+            sourceList.removeItem(item);
         }
 
         public static void transferOne(this ListBox sourceList, ListBox targetList)
